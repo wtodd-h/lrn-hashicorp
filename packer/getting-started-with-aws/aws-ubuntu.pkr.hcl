@@ -32,7 +32,8 @@ packer {
 */
 source "amazon-ebs" "ubuntu" {
   # ami_name      = "learn-packer-linux-aws-redis-msg"
-  ami_name      = "learn-packer-linux-aws-redis"
+  # ami_name      = "learn-packer-linux-aws-redis"
+  ami_name      = "learn-packer-linux-aws-redis-msg"
   instance_type = "t2.micro"
   profile       = "svc_hashicorp_packer"
   region        = "us-east-1"
@@ -73,5 +74,9 @@ build {
       "sudo apt-get install -y redis-server",
       "echo \"FOO is $FOO\" > example.txt",
     ]
+  }
+
+  provisioner "shell" {
+    inline = ["echo This provisioner runs last"]
   }
 }
