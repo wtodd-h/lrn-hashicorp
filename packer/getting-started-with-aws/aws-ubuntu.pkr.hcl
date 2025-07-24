@@ -24,6 +24,15 @@ packer {
   }
 }
 
+variable "ami_prefix" {
+  default = "learn-packer-linux-aws-redis"
+  type    = string
+}
+
+locals {
+  timestamp = regex_replace(timestamp(), "[- TZ:]", "")
+}
+
 /*
   ----------------------
   - SOURCE BLOCK
@@ -51,6 +60,24 @@ source "amazon-ebs" "ubuntu" {
   ssh_username = "ubuntu"
 }
 
+source "amazon-ebs" "ubuntu-focal" {
+  ami_name      = "${var.ami_prefix}-focal-${local.timestamp}"
+  instance_type = "t2.micro"
+  profile       = "svc_hashicorp_packer"
+  region        = "us-east-1"
+  #region        = "us-west-2"
+  source_ami_filter {
+    filters = {
+      name                = "ubuntu/images/*ubuntu-focal-20.04-amd64-server-*"
+      root-device-type    = "ebs"
+      virtualization-type = "hvm"
+    }
+    most_recent = true
+    owners      = ["099720109477"]
+  }
+  ssh_username = "ubuntu"
+}
+
 /*
   ----------------------
   - BUILD BLOCK
@@ -61,7 +88,8 @@ source "amazon-ebs" "ubuntu" {
 build {
   name = "learn-packer"
   sources = [
-    "source.amazon-ebs.ubuntu"
+    "source.amazon-ebs.ubuntu",
+    "source.amazon-ebs.ubuntu-focal"
   ]
 
   provisioner "shell" {
@@ -80,13 +108,4 @@ build {
   provisioner "shell" {
     inline = ["echo This provisioner runs last"]
   }
-}
-
-variable "ami_prefix" {
-  default = "learn-packer-linux-aws-redis"
-  type    = string
-}
-
-locals {
-  timestamp = regex_replace(timestamp(), "[- TZ:]", "")
 }
