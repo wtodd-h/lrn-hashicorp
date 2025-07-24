@@ -31,13 +31,14 @@ packer {
   ----------------------
 */
 source "amazon-ebs" "ubuntu" {
-  # ami_name      = "learn-packer-linux-aws-redis-msg"
-  # ami_name      = "learn-packer-linux-aws-redis"
-  ami_name      = "learn-packer-linux-aws-redis-msg"
+  #ami_name      = "learn-packer-linux-aws"
+  #ami_name      = "learn-packer-linux-aws-redis"
+  #ami_name      = "learn-packer-linux-aws-redis-msg"
+  ami_name      = "${var.ami_prefix}-${local.timestamp}"
   instance_type = "t2.micro"
   profile       = "svc_hashicorp_packer"
   region        = "us-east-1"
-  # region        = "us-west-2"
+  #region        = "us-west-2"
   source_ami_filter {
     filters = {
       name                = "ubuntu/images/*ubuntu-jammy-22.04-amd64-server-*"
@@ -79,4 +80,13 @@ build {
   provisioner "shell" {
     inline = ["echo This provisioner runs last"]
   }
+}
+
+variable "ami_prefix" {
+  default = "learn-packer-linux-aws-redis"
+  type    = string
+}
+
+locals {
+  timestamp = regex_replace(timestamp(), "[- TZ:]", "")
 }
