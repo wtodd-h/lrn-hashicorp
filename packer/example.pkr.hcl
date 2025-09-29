@@ -60,8 +60,8 @@ source "type" "name" {
 /*
   ----------------------
   - BUILD BLOCK
-  - Build blocks define what builders should be started, how to provision them, and if necessary, what to do with their artifacts 
-    through post-processing.
+  - Build blocks define what builders should be started, how to provision them, and if necessary, what to do with their 
+    artifacts through post-processing.
   ----------------------
 */
 build {
@@ -75,7 +75,6 @@ build {
   provisioner "type" {
 
   }
-}
 
 /*
   ----------------------
